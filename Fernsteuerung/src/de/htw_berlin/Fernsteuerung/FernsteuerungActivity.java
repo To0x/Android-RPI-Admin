@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 public class FernsteuerungActivity extends Activity implements SensorEventListener {
 
-	private SensorManager sensorManager;
+	private Sensor mRotVectSensor;
+	private SensorManager mSensorManager;
+	private float[] orientationVals=new float[3];
+	private float[] mRotationMatrix=new float[16];
 	private TextView textView1;
 	
 	@Override
@@ -21,7 +24,8 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_fernsteuerung);
 		textView1 = (TextView) findViewById(R.id.textView2);
-		sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+	    mRotVectSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 	}
 
 	@Override
@@ -36,7 +40,7 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		sensorManager.unregisterListener( this);
+		mSensorManager.unregisterListener( this);
 
 	}
 	
@@ -44,13 +48,17 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		
-		sensorManager.registerListener( this, sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE), sensorManager.SENSOR_DELAY_NORMAL);
-	}
+		 mSensorManager.registerListener(this, mRotVectSensor, mSensorManager.SENSOR_DELAY_GAME);	}
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		textView1.setText("Angle: " + event.values);
+		//textView1.setText("Angle: " + event.values[1]);
+		
+		SensorManager.getRotationMatrixFromVector(mRotationMatrix,event.values);
+        SensorManager.remapCoordinateSystem(mRotationMatrix,SensorManager.AXIS_X, SensorManager.AXIS_Z, mRotationMatrix);
+        SensorManager.getOrientation(mRotationMatrix, orientationVals);
+        orientationVals[2]=(float)Math.toDegrees(orientationVals[2]);
+        textView1.setText(String.valueOf(orientationVals[2]));
 	}
 
 	@Override
