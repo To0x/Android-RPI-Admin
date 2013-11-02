@@ -60,12 +60,43 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/textView1"
-            android:layout_alignRight="@+id/textView1"
-            android:layout_marginBottom="74dp"
-            android:layout_marginRight="49dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="21dp"
+            android:layout_toLeftOf="@+id/switch1"
             android:text="Angle: "
             android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textViewServerOutput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/textView2"
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="19dp"
+            android:text="Server sagt: "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <Button
+            android:id="@+id/buttonSubmit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="62dp"
+            android:onClick="onButtonClick"
+            android:text="Submit" />
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/buttonSubmit"
+            android:layout_marginLeft="34dp"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
 
     </RelativeLayout>
 
