@@ -18,7 +18,9 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class FernsteuerungActivity extends Activity implements SensorEventListener {
@@ -31,21 +33,44 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	
 	private TextView textView2;
 	private EditText editText;
+	
+	private float calibratedX = 0, calibratedY = 0;
+	private SeekBar seekHorizontal, seekVertical;
+	private Button btnCalibrate;
+	
 	final int SOCKET = 9050;
 	final String SERVER_IP = "192.168.0.113";
 	private Socket clientSocket;
 	
+	private final int __layout = 1;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_fernsteuerung);
+		if (__layout == 0)
+			setContentView(R.layout.activity_fernsteuerung);
+		else if (__layout == 1)
+			setContentView(R.layout.angle_rotation);
 		
 		// Steht hier weil sonst eine networkonmainthreadexception kommt 
 		if (android.os.Build.VERSION.SDK_INT > 9) {
 		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 		    StrictMode.setThreadPolicy(policy);
 		}
-		textView1 = (TextView) findViewById(R.id.textView2);
+		if (__layout == 0) {
+			textView1 = (TextView) findViewById(R.id.textView2);
+		    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
+		    editText = (EditText) findViewById(R.id.editText1);
+		}
+		else if (__layout == 1) {
+			seekHorizontal = (SeekBar) findViewById(R.id.seekHorizontal);
+			seekVertical = (SeekBar) findViewById(R.id.seekVertical);
+			btnCalibrate = (Button) findViewById(R.id.buttonReset);
+			
+			seekHorizontal.setProgress(50);
+			seekVertical.setProgress(50);
+		}
+			
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 	    mRotVectSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
@@ -57,9 +82,6 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		} catch (Exception e) {
 			System.out.println("Failure by creating Socket: " + e);
 		}
-	    
-	    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
-	    editText = (EditText) findViewById(R.id.editText1);
 	}
 
 	@Override
@@ -87,8 +109,15 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		SensorManager.getRotationMatrixFromVector(mRotationMatrix,event.values);
         SensorManager.remapCoordinateSystem(mRotationMatrix,SensorManager.AXIS_X, SensorManager.AXIS_Z, mRotationMatrix);
         SensorManager.getOrientation(mRotationMatrix, orientationVals);
+        orientationVals[0]=(float)Math.toDegrees(orientationVals[0]);
         orientationVals[2]=(float)Math.toDegrees(orientationVals[2]);
-        textView1.setText(String.format("Value: %.0f", orientationVals[2]));
+        orientationVals[1]=(float)Math.toDegrees(orientationVals[1]);
+        if (__layout == 0)
+        	textView1.setText(String.format("X: %.0f, Y: %.0f, Z: %.0f", orientationVals[1], orientationVals[2], orientationVals[0]));
+        else if (__layout == 1) {
+        	seekHorizontal.setProgress(50 - (int) ((orientationVals[2] - calibratedY) / 180 * 100));
+        	seekVertical.setProgress(50 - (int) ((orientationVals[0] - calibratedX) / 180 * 100));
+        }
 	}
 
 	@Override
@@ -96,23 +125,34 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	}
 	
 	public void onButtonClick(View view){
-		if (view.getId() == R.id.buttonSubmit){
-			System.out.println(" Button pressed");
-			BufferedReader textIn = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(editText.getText().toString().getBytes())));
-			try {
-				String input = textIn.readLine();
-				BufferedReader clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-				PrintWriter clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
-				clientOut.println(input);	
+		switch (view.getId()) {
+			case  R.id.buttonSubmit: {
+				System.out.println(" Button pressed");
+				BufferedReader textIn = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(editText.getText().toString().getBytes())));
+				try {
+					String input = textIn.readLine();
+					BufferedReader clientIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+					PrintWriter clientOut = new PrintWriter(clientSocket.getOutputStream(), true);
+					clientOut.println(input);	
+					
+					String response = clientIn.readLine();
+					textView2.setText("Server sagt: " + response);
+					clientOut.flush();
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				
-				String response = clientIn.readLine();
-				textView2.setText("Server sagt: " + response);
-				clientOut.flush();
-				
-			} catch (IOException e) {
-				e.printStackTrace();
+				break;
 			}
-			
+			case R.id.buttonReset: {
+				System.out.println("Button RESET!");
+				calibratedX = orientationVals[0];
+				calibratedY = orientationVals[2];
+				seekHorizontal.setProgress(50);
+				seekVertical.setProgress(50);
+				break;
+			}
 		}
 	}
 }

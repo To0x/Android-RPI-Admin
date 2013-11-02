@@ -23,17 +23,55 @@
             android:id="@+id/button2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
+            android:layout_alignBaseline="@+id/switch1"
+            android:layout_alignBottom="@+id/switch1"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="42dp"
             android:text="Gas" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textView1"
+            android:text="Angle: "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/textViewServerOutput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="18dp"
+            android:layout_toLeftOf="@+id/textView2"
+            android:text="Server sagt: "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <EditText
+            android:id="@+id/editText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/textViewServerOutput"
+            android:layout_below="@+id/textViewServerOutput"
+            android:ems="10" >
+
+            <requestFocus />
+        </EditText>
+
+        <Button
+            android:id="@+id/buttonReset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/textView1"
+            android:layout_marginTop="18dp"
+            android:text="Bremse" />
 
         <Switch
             android:id="@+id/switch1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/button2"
-            android:layout_alignBottom="@+id/button2"
+            android:layout_alignBaseline="@+id/buttonReset"
+            android:layout_alignBottom="@+id/buttonReset"
             android:layout_centerHorizontal="true"
             android:textOff="R"
             android:textOn="V" />
@@ -42,62 +80,21 @@
             android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/button2"
+            android:layout_below="@+id/editText1"
             android:layout_centerHorizontal="true"
             android:text="Schaltung"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/switch1"
-            android:layout_alignBottom="@+id/switch1"
-            android:layout_alignParentLeft="true"
-            android:text="Bremse" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="21dp"
-            android:layout_toLeftOf="@+id/switch1"
-            android:text="Angle: "
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <TextView
-            android:id="@+id/textViewServerOutput"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignRight="@+id/textView2"
-            android:layout_below="@+id/textView2"
-            android:layout_marginTop="19dp"
-            android:text="Server sagt: "
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <Button
             android:id="@+id/buttonSubmit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView1"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="62dp"
+            android:layout_alignBaseline="@+id/editText1"
+            android:layout_alignBottom="@+id/editText1"
+            android:layout_marginLeft="18dp"
+            android:layout_toRightOf="@+id/editText1"
             android:onClick="onButtonClick"
             android:text="Submit" />
-
-        <EditText
-            android:id="@+id/editText1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignTop="@+id/buttonSubmit"
-            android:layout_marginLeft="34dp"
-            android:ems="10" >
-
-            <requestFocus />
-        </EditText>
-
     </RelativeLayout>
 
 </TableLayout>
