@@ -4,20 +4,18 @@ package de.htw_berlin.Fernsteuerung;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-import android.R.bool;
+import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.app.Activity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
@@ -49,14 +47,17 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		}
 		textView1 = (TextView) findViewById(R.id.textView2);
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-	    mRotVectSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+	    mRotVectSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 		try {
-			clientSocket = new Socket(SERVER_IP, SOCKET);
+			// included Timeout for Connection!
+			clientSocket = new Socket();
+			clientSocket.setSoTimeout(200);
+			clientSocket.connect(new InetSocketAddress(SERVER_IP, SOCKET), 200);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			System.out.println("Failure by creating Socket: " + e);
 		}
+	    
 	    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
 	    editText = (EditText) findViewById(R.id.editText1);
 	}
@@ -71,7 +72,6 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	
 	@Override
 	protected void onPause() {
-		// TODO Auto-generated method stub
 		super.onPause();
 		mSensorManager.unregisterListener( this);
 
@@ -79,24 +79,20 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	
 	@Override
 	protected void onResume() {
-		// TODO Auto-generated method stub
 		super.onResume();
-		 mSensorManager.registerListener(this, mRotVectSensor, mSensorManager.SENSOR_DELAY_GAME);	}
+		 mSensorManager.registerListener(this, mRotVectSensor, SensorManager.SENSOR_DELAY_GAME);	}
 
 	@Override
-	public void onSensorChanged(SensorEvent event) {
-		//textView1.setText("Angle: " + event.values[1]);
-		
+	public void onSensorChanged(SensorEvent event) {		
 		SensorManager.getRotationMatrixFromVector(mRotationMatrix,event.values);
         SensorManager.remapCoordinateSystem(mRotationMatrix,SensorManager.AXIS_X, SensorManager.AXIS_Z, mRotationMatrix);
         SensorManager.getOrientation(mRotationMatrix, orientationVals);
         orientationVals[2]=(float)Math.toDegrees(orientationVals[2]);
-        textView1.setText(String.valueOf("Angle" + orientationVals[2]));
+        textView1.setText(String.format("Value: %.0f", orientationVals[2]));
 	}
 
 	@Override
 	public void onAccuracyChanged(Sensor arg0, int arg1) {
-		// TODO Auto-generated method stub	
 	}
 	
 	public void onButtonClick(View view){
@@ -114,7 +110,6 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 				clientOut.flush();
 				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
