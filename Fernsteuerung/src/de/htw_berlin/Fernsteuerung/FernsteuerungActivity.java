@@ -1,12 +1,12 @@
 package de.htw_berlin.Fernsteuerung;
 
-
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
 
 import android.app.Activity;
@@ -23,6 +23,8 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import org.xmlrpc.android.*;
+
 public class FernsteuerungActivity extends Activity implements SensorEventListener {
 
 	private Sensor mRotVectSensor;
@@ -37,12 +39,13 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	private float calibratedX = 0, calibratedY = 0;
 	private SeekBar seekHorizontal, seekVertical;
 	private Button btnCalibrate;
+	private Button btnChange;
 	
 	final int SOCKET = 9050;
-	final String SERVER_IP = "192.168.0.113";
+	final String SERVER_IP = "192.168.43.19";
 	private Socket clientSocket;
 	
-	private final int __layout = 1;
+	private int __layout = 0;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,19 +64,39 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 			textView1 = (TextView) findViewById(R.id.textView2);
 		    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
 		    editText = (EditText) findViewById(R.id.editText1);
+		    btnChange = (Button) findViewById(R.id.buttonChange);
 		}
 		else if (__layout == 1) {
+			textView1 = (TextView) findViewById(R.id.ServerResponse);
 			seekHorizontal = (SeekBar) findViewById(R.id.seekHorizontal);
 			seekVertical = (SeekBar) findViewById(R.id.seekVertical);
 			btnCalibrate = (Button) findViewById(R.id.buttonReset);
-			
+			btnChange = (Button) findViewById(R.id.buttonChange);
 			seekHorizontal.setProgress(50);
 			seekVertical.setProgress(50);
 		}
 			
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 	    mRotVectSensor=mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+	    
+	    //---------------------- RPC -----------------------//
+	    XMLRPCClient client = null;
+		try {
+			client = new XMLRPCClient(new java.net.URL("http://192.168.178.42:9000"));
+		} catch (MalformedURLException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
+	    int result = 0;
+		try {
+			result = (Integer) client.call("add",2,4);
+		} catch (XMLRPCException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
+		textView1.setText(result);
+		
 		try {
 			// included Timeout for Connection!
 			clientSocket = new Socket();
@@ -151,6 +174,32 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 				calibratedY = orientationVals[2];
 				seekHorizontal.setProgress(50);
 				seekVertical.setProgress(50);
+				break;
+			}
+			case R.id.buttonChange: {
+				if (__layout == 0) {
+					setContentView(R.layout.angle_rotation);
+					this.__layout = 1;
+				}
+				else if (__layout == 1) {
+					setContentView(R.layout.activity_fernsteuerung);
+					__layout = 0;
+				}
+				
+				if (__layout == 0) {
+					textView1 = (TextView) findViewById(R.id.textView2);
+				    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
+				    editText = (EditText) findViewById(R.id.editText1);
+				    btnChange = (Button) findViewById(R.id.buttonChange);
+				}
+				else if (__layout == 1) {
+					seekHorizontal = (SeekBar) findViewById(R.id.seekHorizontal);
+					seekVertical = (SeekBar) findViewById(R.id.seekVertical);
+					btnCalibrate = (Button) findViewById(R.id.buttonReset);
+					btnChange = (Button) findViewById(R.id.buttonChange);
+					seekHorizontal.setProgress(50);
+					seekVertical.setProgress(50);
+				}	
 				break;
 			}
 		}

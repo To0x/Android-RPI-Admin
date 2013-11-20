@@ -4,6 +4,8 @@ import select
 import sys
 import atexit
 
+from SimpleXMLRPCServer import SimpleXMLRPCServer as Server
+
 def prompt():
 	sys.stdout.write('<You> ')
 	sys.stdout.flush()
@@ -17,6 +19,13 @@ except:
 PORT = 9050
 HOST = '192.168.0.113'
 RECV_BUFFER = 4096
+
+def quad(n):
+	return n*n
+
+srv = Server(("",1337))
+srv.register_function(quad)
+srv.serve_forever()
 
 server_socket.bind((HOST, PORT))
 server_socket.listen(10)

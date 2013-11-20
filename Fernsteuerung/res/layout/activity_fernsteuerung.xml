@@ -32,7 +32,7 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/textView1"
+            android:layout_alignLeft="@+id/ServerResponse"
             android:text="Angle: "
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -62,7 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@+id/textView1"
+            android:layout_below="@+id/ServerResponse"
             android:layout_marginTop="18dp"
             android:text="Bremse" />
 
@@ -77,7 +77,7 @@
             android:textOn="V" />
 
         <TextView
-            android:id="@+id/textView1"
+            android:id="@+id/ServerResponse"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/editText1"
@@ -95,6 +95,17 @@
             android:layout_toRightOf="@+id/editText1"
             android:onClick="onButtonClick"
             android:text="Submit" />
+
+        <Button
+            android:id="@+id/buttonChange"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Change"
+            android:onClick="onButtonClick" />
+
     </RelativeLayout>
 
 </TableLayout>
