@@ -3,16 +3,23 @@ Created on 19.11.2013
 
 @author: Master
 '''
-from xmlrpc.server import SimpleXMLRPCServer
+from SimpleXMLRPCServer import SimpleXMLRPCServer
+#from xmlrpc.server import SimpleXMLRPCServer
+from Cam import Cam
 
-server = SimpleXMLRPCServer(('192.168.178.42', 9000), logRequests=True)
+server = SimpleXMLRPCServer(('141.45.203.191', 9000))
 server.register_introspection_functions()
 
 
 def adder_function(a,b):
     return a+b
 
+def startCam(ipAdress, port):
+    c = Cam(ipAdress,port)
+    c.startCam()
+    pass
+
 server.register_function(adder_function, 'add')
-print ("quad registered")
+server.register_function(startCam, 'startCam')
 server.serve_forever()
 

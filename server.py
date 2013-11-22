@@ -1,10 +1,12 @@
-import socket
+import atexit
 import os
 import select
+import socket
 import sys
-import atexit
 
-from SimpleXMLRPCServer import SimpleXMLRPCServer as Server
+#import xmlrpc.server.SimpleXMLRPCServer
+#import xmlrpc.server.SimpleXMLRPCRequestHandler
+
 
 def prompt():
 	sys.stdout.write('<You> ')
@@ -13,26 +15,19 @@ def prompt():
 try:
 	server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 except:
-	print 'Failed to create Socket'
+	print ("Failed to create Socket")
 	sys.exit()
 
 PORT = 9050
 HOST = '192.168.0.113'
 RECV_BUFFER = 4096
 
-def quad(n):
-	return n*n
-
-srv = Server(("",1337))
-srv.register_function(quad)
-srv.serve_forever()
-
-server_socket.bind((HOST, PORT))
-server_socket.listen(10)
+#server_socket.bind((HOST, PORT))
+#server_socket.listen(10)
 
 input = [server_socket, sys.stdin]
 
-print 'Chat Program'
+print ("Chat Program")
 prompt()
 
 
@@ -66,4 +61,4 @@ try:
 
 except KeyboardInterrupt:
 	server_socket.close()
-	print('Socket closed')
+	print("Socket closed")
