@@ -11,7 +11,7 @@ import de.htw_berlin.Fernsteuerung.__DEFINES;
 
 public class ConnectionHelper {
 	
-	private static int WifiError = 0x00;
+	private static int WifiError;
 	/**
 	 * Check if the right WLan (for Raspberry-Drive) is connected
 	 * Use the WLan SSID to check!
@@ -30,7 +30,7 @@ public class ConnectionHelper {
 				WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 				if (wifiInfo != null) 
 				{
-					if (wifiInfo.getSSID() == "RaspberryDrive") {
+					if (wifiInfo.getSSID() == __DEFINES.WIFI.NETWORK_NAME) {
 						WifiError = __DEFINES.WIFI.OK;
 					}
 					else

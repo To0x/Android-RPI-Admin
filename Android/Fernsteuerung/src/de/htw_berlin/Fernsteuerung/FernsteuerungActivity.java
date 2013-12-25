@@ -21,6 +21,9 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import de.htw_berlin.Fernsteuerung.ViewHelper;
+import de.htw_berlin.Fernsteuerung.__DEFINES.*;
+
 public class FernsteuerungActivity extends Activity implements SensorEventListener {
 	
 	private Sensor mRotVectSensor;
@@ -43,34 +46,15 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	
 	private Socket clientSocket;
 	
-	private int __layout = __DEFINES.DEBUG;
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	private int actuallyLayout = -1;
+	private void loadLayout (int layout) {
 		
-		super.onCreate(savedInstanceState);
-		ConnectionHelper.CheckWifi(this);
+		switch (layout) {
 		
-		debugText = new TextView[3][3];
-		gravity = new float[3];
-		geomagnetic = new float[3];
-		if (__layout == 0)
-			setContentView(R.layout.activity_fernsteuerung);
-		else if (__layout == 1)
-			setContentView(R.layout.debug);
-		
-		// Steht hier weil sonst eine networkonmainthreadexception kommt 
-		if (android.os.Build.VERSION.SDK_INT > 9) {
-		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-		    StrictMode.setThreadPolicy(policy);
-		}
-		if (__layout == 0) {
-			textView1 = (TextView) findViewById(R.id.textView2);
-		    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
-		    editText = (EditText) findViewById(R.id.editText1);
-		    btnChange = (Button) findViewById(R.id.buttonChange);
-		}
-		else if (__layout == 1) {
+			case LAYOUT.DEBUG:
+			{				
+				setContentView(R.layout.debug);
+				debugText = new TextView[3][3];
 				debugText[0][0] = (TextView) findViewById(R.id.textView1);
 				debugText[0][1] = (TextView) findViewById(R.id.textView2);
 				debugText[0][2] = (TextView) findViewById(R.id.textView3);
@@ -80,8 +64,50 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 				debugText[2][0] = (TextView) findViewById(R.id.textView7);
 				debugText[2][1] = (TextView) findViewById(R.id.textView8);
 				debugText[2][2] = (TextView) findViewById(R.id.textView9);
-		}
+				break;
+			}
+				
+			case LAYOUT.LIVE:
+			{
+				setContentView(R.layout.activity_fernsteuerung);
+				textView1 = (TextView) findViewById(R.id.textView2);
+			    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
+			    editText = (EditText) findViewById(R.id.editText1);
+			    btnChange = (Button) findViewById(R.id.buttonChange);
+			    break;
+			}
 			
+		
+		}
+		actuallyLayout = layout;
+		return;
+	}
+
+	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		
+		super.onCreate(savedInstanceState);
+		
+		loadLayout(LAYOUT.LIVE);
+		
+		int errorCode;
+		if ((errorCode = ConnectionHelper.CheckWifi(this)) != WIFI.OK) {
+			ViewHelper.alterUser(this, errorCode);
+		}
+		
+		RpcConnection myConnection = new RpcConnection();
+		myConnection.call("add");
+		
+		gravity = new float[3];
+		geomagnetic = new float[3];
+		
+		// Steht hier weil sonst eine networkonmainthreadexception kommt 
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
+		    StrictMode.setThreadPolicy(policy);
+		}
+		
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 	    
 
@@ -142,7 +168,7 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 			//	mSensorManager.getOrientation(R, orientationMatrix);
 			}
 			
-			if (__layout == __DEFINES.DEBUG) {
+			if (actuallyLayout == LAYOUT.DEBUG) {
 				//debugText[0][0].setText(String.format("%d", (int) Math.toDegrees(orientationMatrix[0])));
 				//debugText[0][1].setText(String.format("%d", (int) Math.toDegrees(orientationMatrix[1])));
 				//debugText[0][2].setText(String.format("%d", (int) Math.toDegrees(orientationMatrix[2])));
@@ -163,9 +189,10 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	}
 	
 	public void onButtonClick(View view){
-		switch (view.getId()) {
-			case  R.id.buttonSubmit: {
-				System.out.println(" Button pressed");
+		switch (view.getId()) 
+		{
+			case  R.id.buttonSubmit: 
+			{
 				BufferedReader textIn = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(editText.getText().toString().getBytes())));
 				try {
 					String input = textIn.readLine();
@@ -183,33 +210,14 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 				
 				break;
 			}
-			case R.id.buttonChange: {
-				if (__layout == 0) {
-					setContentView(R.layout.debug);
-					this.__layout = __DEFINES.DEBUG;
-				}
-				else if (__layout == 1) {
-					setContentView(R.layout.activity_fernsteuerung);
-					__layout = 0;
-				}
+			case R.id.buttonChange: 
+			{
 				
-				if (__layout == 0) {
-					textView1 = (TextView) findViewById(R.id.textView2);
-				    textView2 = (TextView) findViewById(R.id.textViewServerOutput);
-				    editText = (EditText) findViewById(R.id.editText1);
-				    btnChange = (Button) findViewById(R.id.buttonChange);
-				}
-				else if (__layout == 1) {
-					debugText[0][0] = (TextView) findViewById(R.id.textView1);
-					debugText[0][1] = (TextView) findViewById(R.id.textView2);
-					debugText[0][2] = (TextView) findViewById(R.id.textView3);
-					debugText[1][0] = (TextView) findViewById(R.id.textView4);
-					debugText[1][1] = (TextView) findViewById(R.id.textView5);
-					debugText[1][2] = (TextView) findViewById(R.id.textView6);
-					debugText[2][0] = (TextView) findViewById(R.id.textView7);
-					debugText[2][1] = (TextView) findViewById(R.id.textView8);
-					debugText[2][2] = (TextView) findViewById(R.id.textView9);
-				}	
+				if (actuallyLayout == LAYOUT.DEBUG)
+					loadLayout(LAYOUT.LIVE);
+				else
+					loadLayout(LAYOUT.DEBUG);
+
 				break;
 			}
 		}
