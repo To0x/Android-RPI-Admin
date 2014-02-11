@@ -5,26 +5,38 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
 
+import org.xmlrpc.android.XMLRPCClient;
+import org.xmlrpc.android.XMLRPCException;
+
 import android.app.Activity;
+import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.text.InputFilter.LengthFilter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import de.htw_berlin.Fernsteuerung.ViewHelper;
+import de.htw_berlin.Fernsteuerung.R;
+
 import de.htw_berlin.Fernsteuerung.__DEFINES.*;
 
-public class FernsteuerungActivity extends Activity implements SensorEventListener {
+public class FernsteuerungActivity extends Activity {
 	
 	private Sensor mRotVectSensor;
 	private SensorManager mSensorManager;
@@ -43,6 +55,11 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 	private Button btnChange;
 	
 	private TextView debugText[][];
+	
+	float mGravityX = 0;
+	float mGravityY = 0;
+	
+    float azimuth = 0;
 	
 	private Socket clientSocket;
 	
@@ -83,7 +100,61 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		return;
 	}
 
+	private int startRPCConnection() {
+		
+		//TODO unbedingt rausholn!!!
+		//XXX in Thread umschreiben
+		if (android.os.Build.VERSION.SDK_INT > 9) {
+		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
+		    StrictMode.setThreadPolicy(policy);
+		}
+		
+		try {
+			
+			//TODO check if needed?
+			// included Timeout for Connection!
+			/*
+			clientSocket = new Socket();
+			clientSocket.setSoTimeout(200);
+			clientSocket.connect(new InetSocketAddress(__DEFINES.SERVER_IP, __DEFINES.SERVER_PORT), 200);
+			*/
+			
+			
+			XMLRPCClient client = null;
+			client = new XMLRPCClient(new java.net.URL(String.format("http://%s:%d", __DEFINES.SERVER_IP, __DEFINES.SERVER_PORT)));
+			int result = 0;
+			//result =  (Integer) client.call("add",2,4);
+			//client.call("control","192.168.178.37");
+			return result;
+			
+		} catch (MalformedURLException e1) {
+			Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
+		//} catch (XMLRPCException e1) {
+		//	Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
+		}
+		return -1;
+	}
 	
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		
+		super.onCreate(savedInstanceState);
+		
+		int bla = this.startRPCConnection();
+		Log.d("Ergebnis: ", String.valueOf(bla));
+		Toast.makeText(getApplicationContext(), String.format("Result: %d", bla), Toast.LENGTH_LONG).show();
+		
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+		
+        /*getFragmentManager().beginTransaction()
+        .replace(android.R.id.content, new SettingsActivity())
+        .commit();
+*/        
+
+	}
+	
+	/*
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
@@ -93,25 +164,21 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		
 		int errorCode;
 		if ((errorCode = ConnectionHelper.CheckWifi(this)) != WIFI.OK) {
-			ViewHelper.alterUser(this, errorCode);
-		}
-		
-		RpcConnection myConnection = new RpcConnection();
-		myConnection.call("add");
-		
-		gravity = new float[3];
-		geomagnetic = new float[3];
-		
-		// Steht hier weil sonst eine networkonmainthreadexception kommt 
-		if (android.os.Build.VERSION.SDK_INT > 9) {
-		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
-		    StrictMode.setThreadPolicy(policy);
+			Context c = getApplicationContext();
+			CharSequence text = __DEFINES.WIFI.NOT_CONNECTED_ERROR_TEXT;
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(c, text, duration);
+			toast.show();
+			
+			//ViewHelper.alterUser(this, errorCode);
 		}
 		
 		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 	    
 
 	}
+	
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,35 +212,64 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 		}
 		return output;
 	}
-	
+		
 	@Override
 	public void onSensorChanged(SensorEvent event) {		
+	
+		final int con = 10;
+		
+		
+		this.mGravityX = event.values[1] * 2;
+		this.mGravityY = event.values[0] * 2;
+		if(this.mGravityX > con)
+			this.mGravityX = con;
+		if(this.mGravityY > con)
+			this.mGravityY = con;
+		if(this.mGravityX < con * (-1))
+			this.mGravityX = con * (-1);
+		if(this.mGravityY < con * (-1))
+			this.mGravityY = con * (-1);
 
+		mGravityX *= 4.5;
+		mGravityY *= 4.5;
+		
 		float[] R = new float[9];
 		float[] I = new float[9];
 		float[] orientationMatrix = new float[3];
 		
 		
 		if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-			//System.arraycopy(event.values, 0, gravity, 0, 3);
-			gravity = lowPass(event.values.clone(), gravity);
+			
+			if (gravity[1] - event.values[1] < 10 ||gravity[1] - event.values[1] > 10) {
+				System.arraycopy(event.values, 0, gravity, 0, 3);	
+			}
+
+			//gravity = lowPass(event.values.clone(), gravity);
 		}
 		if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
-			//System.arraycopy(event.values, 0, geomagnetic,0,3);
-			geomagnetic = lowPass(event.values.clone(), geomagnetic);
+			System.arraycopy(event.values, 0, geomagnetic,0,3);
+			//geomagnetic = lowPass(event.values.clone(), geomagnetic);
 		}
 		
 		if ((gravity != null) && (geomagnetic != null)) {
 			if (mSensorManager.getRotationMatrix(R, I, gravity, geomagnetic)) {
-			//	mSensorManager.getOrientation(R, orientationMatrix);
+				//mSensorManager.getOrientation(R, orientationMatrix);
 			}
 			
 			if (actuallyLayout == LAYOUT.DEBUG) {
+				
+				debugText[0][0].setText(String.format("%5.4f", gravity[1]));
+				
+				debugText[0][1].setText(String.format("%5.4f", mGravityX));
+				debugText[0][2].setText(String.format("%5.4f", mGravityY));
+				
+				
+				
 				//debugText[0][0].setText(String.format("%d", (int) Math.toDegrees(orientationMatrix[0])));
 				//debugText[0][1].setText(String.format("%d", (int) Math.toDegrees(orientationMatrix[1])));
 				//debugText[0][2].setText(String.format("%d", (int) Math.toDegrees(orientationMatrix[2])));
 				debugText[1][0].setText(String.format("%d", (int) Math.toDegrees(gravity[0])));
-				debugText[1][1].setText(String.format("%d", (int) Math.toDegrees(gravity[1])));
+				debugText[1][1].setText(String.format("%d", (int) Math.toDegrees(gravity[1] / 10)));
 				debugText[1][2].setText(String.format("%d", (int) Math.toDegrees(gravity[2])));
 				debugText[2][0].setText(String.format("%d", (int) Math.toDegrees(geomagnetic[0])));
 				debugText[2][1].setText(String.format("%d", (int) Math.toDegrees(geomagnetic[1])));
@@ -181,6 +277,7 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 			}
 			
 		}
+
 		
 	}
 
@@ -222,4 +319,5 @@ public class FernsteuerungActivity extends Activity implements SensorEventListen
 			}
 		}
 	}
+	*/
 }

@@ -1,7 +1,7 @@
 package de.htw_berlin.Fernsteuerung;
 
 public final class __DEFINES {
-	protected final static String SERVER_IP = "192.168.132.2";
+	protected final static String SERVER_IP = "192.168.178.38";
 	protected final static int SERVER_PORT = 9000;
 	
 	public static final class LAYOUT {

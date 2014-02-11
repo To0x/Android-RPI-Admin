@@ -4,5 +4,13 @@
     <string name="app_name">Fernsteuerung</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_settings">Settings</string>
+    <string name="general">General</string>
+    <string name="raspiptitle">Raspberry IP</string>
+    <string name="raspiptext">Please Insert the IP Address of the Raspberry car here.</string>
+    <string name="btnSpeed">Gas</string>
+    <string name="btnBreak">Bremse</string>
+    <string name="raspipport">Raspberry Port</string>
+    
 
 </resources>

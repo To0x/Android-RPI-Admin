@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 import android.net.NetworkInfo.DetailedState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import de.htw_berlin.Fernsteuerung.__DEFINES;
+import de.htw_berlin.Fernsteuerung.__DEFINES.WIFI;
 
 public class ConnectionHelper {
 	
@@ -30,23 +30,23 @@ public class ConnectionHelper {
 				WifiInfo wifiInfo = wifiManager.getConnectionInfo();
 				if (wifiInfo != null) 
 				{
-					if (wifiInfo.getSSID() == __DEFINES.WIFI.NETWORK_NAME) {
-						WifiError = __DEFINES.WIFI.OK;
+					if (wifiInfo.getSSID() == WIFI.NETWORK_NAME) {
+						WifiError = WIFI.OK;
 					}
 					else
 					{
-						WifiError = __DEFINES.WIFI.WRONG_NETWORK;
+						WifiError = WIFI.WRONG_NETWORK;
 					}
 				}
 			}
 			else 
 			{
-				WifiError = __DEFINES.WIFI.NOT_CONNECTED;
+				WifiError = WIFI.NOT_CONNECTED;
 			}
 		} 
 		catch (Exception e) 
 		{
-			WifiError = __DEFINES.WIFI.UNKNOWN_ERROR;
+			WifiError = WIFI.UNKNOWN_ERROR;
 		}
 		
 		return WifiError;
