@@ -1,47 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/AbsoluteLayout1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
-    <Button
-        android:id="@+id/btnSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:onClick="onButtonClick"
-        android:text="@string/btnSpeed" />
-
-    <Button
-        android:id="@+id/btnBreak"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:onClick="onButtonClick"
-        android:text="@string/btnBreak" />
+    android:layout_height="match_parent"
+    android:background="@drawable/background" >
 
     <SeekBar
         android:id="@+id/seekBarGravity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btnSpeed"
-        android:layout_toLeftOf="@+id/btnBreak"
-        android:layout_toRightOf="@+id/btnSpeed"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:longClickable="false"
-        android:progress="50" />
+        android:progress="50"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnBreak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="@string/btnBreak"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btnSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClick"
+        android:text="@string/btnSpeed"
+        android:visibility="invisible" />
+
+    <!--
+        android:thumb="@drawable/tranzparenz"
+        android:track="@drawable/selectorswitch"
+    -->
+
+    <SeekBar
+        android:id="@+id/seekBarSpeed"
+        android:layout_width="291dp"
+        android:layout_height="wrap_content"
+        android:layout_x="412dp"
+        android:layout_y="116dp"
+        android:background="@drawable/throttlenp"
+        android:rotation="270"
+        android:thumb="@drawable/throttlebutton" 
+   		/>
 
     <Switch
         android:id="@+id/switchGear"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:textOff="D"
-        android:textOn="R" />
+        android:layout_x="1dp"
+        android:layout_y="110dp"
+        android:background="@drawable/gear1"
+        android:checked="false"
+        android:rotation="270"
+        android:textOff=" "
+        android:textOn=" "
+        android:thumb="@drawable/throttlebutton" />
 
-</RelativeLayout>
+    <ToggleButton
+        android:id="@+id/toggleButton1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="407dp"
+        android:layout_y="-31dp"
+        android:background="@drawable/selectorswitch"
+        android:text="ToggleButton"
+        android:textOff="Aus"
+        android:textOn="An" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="28dp"
+        android:layout_height="wrap_content"
+        android:layout_x="39dp"
+        android:layout_y="70dp"
+        android:text="R" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="16dp"
+        android:layout_height="wrap_content"
+        android:layout_x="39dp"
+        android:layout_y="189dp"
+        android:text="D" />
+
+</AbsoluteLayout>

@@ -56,7 +56,7 @@ class Receiver(threading.Thread):
 
 controler = Controler()
 
-thread = Receiver(controler, "141.45.203.9", 5001)
+thread = Receiver(controler, "192.168.0.101", 5001)
 thread.start()
 
 while True:

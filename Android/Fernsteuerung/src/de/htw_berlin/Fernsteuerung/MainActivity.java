@@ -2,7 +2,6 @@ package de.htw_berlin.Fernsteuerung;
 
 import java.util.Timer;
 import java.util.TimerTask;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +11,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
 
 
@@ -27,7 +28,7 @@ public class MainActivity extends Activity {
 	//--------------------------------------------
 	// SPEED
 	//--------------------------------------------
-	private final int maxSpeed = 50;
+	private final int maxSpeed = 100;
 	private final int minSpeed = 0;
 	private final int speedDifference = 5;
 	private int speed = 0;
@@ -37,7 +38,7 @@ public class MainActivity extends Activity {
 	Button btnBreak = null;
 	SeekBar seekBarGravity = null;
 	Switch switchGear = null;
-	
+	SeekBar speedBar = null;
 	public int getSpeed() {
 		return this.speed;
 	}
@@ -89,15 +90,42 @@ public class MainActivity extends Activity {
 		btnBreak = (Button) findViewById(R.id.btnBreak);
 		seekBarGravity = (SeekBar) findViewById(R.id.seekBarGravity);
 		switchGear = (Switch) findViewById(R.id.switchGear);
+		speedBar = (SeekBar) findViewById(R.id.seekBarSpeed);
 		
+		speedBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				// TODO Auto-generated method stub
+				speed = progress;
+				if (speed == 0){
+					switchGear.setClickable(true);
+				} else {
+					switchGear.setClickable(false);
+				}
+			}
+		});
 		//TODO Rückwärtsgangswitch nur bei speed=0 aktivieren
 		
 		sens = new SensorHelper(this);
 		sens.initSensoring();
-		
-		sender = new Sender(this);
+
+		sender = new Sender(this);	
 		myTimer = new SendTimer(sender);
-		
+
 		//sender.sendBroadcast("Raspcar?"); --> is set to private (cause function is failure)
 	}
 	

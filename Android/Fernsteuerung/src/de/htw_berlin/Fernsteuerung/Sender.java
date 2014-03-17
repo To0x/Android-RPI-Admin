@@ -33,22 +33,24 @@ public class Sender {
 	private final String angle = "angle";
 	private final String gear = "gear";
 	
+	private static JSONObject json;
+	
 	private String ip;
 	private int port;
 	
 	public Sender(MainActivity a) {
 		act = a;
 		loadSettingsData();
+		json = new JSONObject();
 	}
 	
 	public void loadSettingsData() {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(act);
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(act);	
 		ip = sharedPref.getString("pref_key_raspip","");
-		port = Integer.valueOf(sharedPref.getString("pref_key_raspport", ""));
+		port = 5001;//Integer.valueOf(sharedPref.getString("pref_key_raspport", ""));
 	}
 	
 	public void sendNow () {
-		JSONObject json = new JSONObject();
 		
 		try {
 			json.put(speed, act.getSpeed());
@@ -61,6 +63,9 @@ public class Sender {
 		}
 		
 		sendNow(json.toString());
+		json.remove(speed);
+		json.remove(angle);
+		json.remove(gear);
 		
 	}
 	
@@ -112,13 +117,10 @@ public class Sender {
 			
 			
 		} catch (SocketException e) {
-			Toast.makeText(act.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 			Log.e(this.toString(), e.getMessage(), e);
 		} catch (UnknownHostException e) {
-			Toast.makeText(act.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 			Log.e(this.toString(), e.getMessage(), e);
 		} catch (IOException e) {
-			Toast.makeText(act.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 			Log.e(this.toString(), e.getMessage(), e);
 		}
 	}
