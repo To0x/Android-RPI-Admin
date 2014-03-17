@@ -38,11 +38,11 @@ public final class R {
     }
     public static final class id {
         public static final int AbsoluteLayout1=0x7f09000b;
-        public static final int RelativeLayout1=0x7f090011;
+        public static final int RelativeLayout1=0x7f090012;
         public static final int ServerResponse=0x7f090005;
         public static final int Space1=0x7f090001;
         public static final int TableLayout1=0x7f090000;
-        public static final int action_settings=0x7f090019;
+        public static final int action_settings=0x7f09001b;
         public static final int btnBreak=0x7f090002;
         public static final int btnSpeed=0x7f09000d;
         public static final int buttonChange=0x7f09000a;
@@ -52,15 +52,17 @@ public final class R {
         public static final int seekBarGravity=0x7f09000c;
         public static final int seekBarSpeed=0x7f09000e;
         public static final int switchGear=0x7f090003;
-        public static final int textView1=0x7f090010;
+        public static final int textView1=0x7f090013;
         public static final int textView2=0x7f090004;
-        public static final int textView3=0x7f090012;
-        public static final int textView4=0x7f090014;
-        public static final int textView5=0x7f090013;
-        public static final int textView6=0x7f090015;
-        public static final int textView7=0x7f090016;
-        public static final int textView8=0x7f090017;
-        public static final int textView9=0x7f090018;
+        public static final int textView3=0x7f090014;
+        public static final int textView4=0x7f090016;
+        public static final int textView5=0x7f090015;
+        public static final int textView6=0x7f090017;
+        public static final int textView7=0x7f090018;
+        public static final int textView8=0x7f090019;
+        public static final int textView9=0x7f09001a;
+        public static final int textViewDrive=0x7f090011;
+        public static final int textViewReverse=0x7f090010;
         public static final int textViewServerOutput=0x7f090006;
         public static final int toggleButton1=0x7f09000f;
     }

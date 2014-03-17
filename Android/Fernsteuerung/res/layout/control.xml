@@ -69,23 +69,26 @@
         android:layout_y="-31dp"
         android:background="@drawable/selectorswitch"
         android:text="ToggleButton"
+        android:textColor="#ffffffff"
         android:textOff="Aus"
         android:textOn="An" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/textViewReverse"
         android:layout_width="28dp"
         android:layout_height="wrap_content"
         android:layout_x="39dp"
         android:layout_y="70dp"
+        android:textColor="#ffffff"
         android:text="R" />
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/textViewDrive"
         android:layout_width="16dp"
         android:layout_height="wrap_content"
         android:layout_x="39dp"
         android:layout_y="189dp"
+        android:textColor="#ffffff"
         android:text="D" />
 
 </AbsoluteLayout>
