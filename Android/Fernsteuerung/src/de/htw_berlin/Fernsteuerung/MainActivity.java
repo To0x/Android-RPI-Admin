@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -39,6 +41,8 @@ public class MainActivity extends Activity {
 	SeekBar seekBarGravity = null;
 	Switch switchGear = null;
 	SeekBar speedBar = null;
+	WebView wvCamera = null;
+	
 	public int getSpeed() {
 		return this.speed;
 	}
@@ -90,6 +94,9 @@ public class MainActivity extends Activity {
 		btnBreak = (Button) findViewById(R.id.btnBreak);
 		seekBarGravity = (SeekBar) findViewById(R.id.seekBarGravity);
 		switchGear = (Switch) findViewById(R.id.switchGear);
+		wvCamera = (WebView) findViewById(R.id.webViewCamera);
+		wvCamera.getSettings().setJavaScriptEnabled(true);
+		wvCamera.setWebViewClient(new WebViewClient());
 		speedBar = (SeekBar) findViewById(R.id.seekBarSpeed);
 		
 		speedBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
@@ -153,6 +160,8 @@ public class MainActivity extends Activity {
 		timer.schedule(myTimer,1000	 , TimerTick);
 		
 		sender.loadSettingsData();
+		
+		wvCamera.loadUrl("http://192.168.55.1:8080/javascript_simple.html");
 	}
 
 	//--------------------------------------------

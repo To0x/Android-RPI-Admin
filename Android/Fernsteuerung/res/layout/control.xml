@@ -91,4 +91,11 @@
         android:textColor="#ffffff"
         android:text="D" />
 
+    <WebView
+        android:id="@+id/webViewCamera"
+        android:layout_width="320dp"
+        android:layout_height="240dp"
+        android:layout_x="102dp"
+        android:layout_y="26dp" />
+
 </AbsoluteLayout>

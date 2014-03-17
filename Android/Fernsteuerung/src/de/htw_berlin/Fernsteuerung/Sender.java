@@ -1,6 +1,7 @@
 package de.htw_berlin.Fernsteuerung;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -33,21 +34,37 @@ public class Sender {
 	private final String angle = "angle";
 	private final String gear = "gear";
 	
-	private static JSONObject json;
+	private DatagramSocket s = null;
+	private DatagramPacket packet = null;
+	private InetAddress local = null;
+	
+	private int msgLenght;
+	private byte[] bmsg;
 	
 	private String ip;
 	private int port;
+	
+	private static JSONObject json;
 	
 	public Sender(MainActivity a) {
 		act = a;
 		loadSettingsData();
 		json = new JSONObject();
+		
+		try {
+			s = new DatagramSocket();
+			local = InetAddress.getByName(ip);
+		} catch (SocketException e) {
+			e.printStackTrace();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void loadSettingsData() {
-		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(act);	
+		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(act);
 		ip = sharedPref.getString("pref_key_raspip","");
-		port = 5001;//Integer.valueOf(sharedPref.getString("pref_key_raspport", ""));
+		port = Integer.valueOf(sharedPref.getString("pref_key_raspport", "0"));
 	}
 	
 	public void sendNow () {
@@ -99,30 +116,29 @@ public class Sender {
 		}
 
 	}
-	
+		
 	private void sendNow (String msg) {
 		
 		Log.d("Send Now: " , msg);
-		
-		try {
-			DatagramSocket s = new DatagramSocket();
-			InetAddress local = InetAddress.getByName(ip);
 			
-			int msgLenght = msg.length();
-			byte[] bmsg = msg.getBytes("ISO-8859-1");
-			
-			DatagramPacket packet = new DatagramPacket(bmsg, msgLenght, local, port);
-			
-			s.send(packet);
-			
-			
-		} catch (SocketException e) {
-			Log.e(this.toString(), e.getMessage(), e);
-		} catch (UnknownHostException e) {
-			Log.e(this.toString(), e.getMessage(), e);
-		} catch (IOException e) {
-			Log.e(this.toString(), e.getMessage(), e);
-		}
+			try {
+				msgLenght = msg.length();
+				bmsg = msg.getBytes("ISO-8859-1");
+				
+				packet = new DatagramPacket(bmsg, msgLenght, local, port);
+				
+				s.send(packet);
+				packet = null;
+				bmsg = null;
+				msgLenght = 0;
+				
+				
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 	}
 	
 }
