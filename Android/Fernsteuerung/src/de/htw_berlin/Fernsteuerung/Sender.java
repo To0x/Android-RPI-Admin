@@ -9,16 +9,12 @@ import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.nio.charset.Charset;
 import java.util.Enumeration;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.DhcpInfo;
-import android.net.wifi.WifiManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,7 +29,7 @@ public class Sender {
 	private final String speed = "speed";
 	private final String angle = "angle";
 	private final String gear = "gear";
-	
+	private final String light = "light";
 	private DatagramSocket s = null;
 	private DatagramPacket packet = null;
 	private InetAddress local = null;
@@ -63,8 +59,8 @@ public class Sender {
 	
 	public void loadSettingsData() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(act);
-		ip = sharedPref.getString("pref_key_raspip","");
-		port = Integer.valueOf(sharedPref.getString("pref_key_raspport", "0"));
+		ip = "192.168.55.1";//sharedPref.getString("pref_key_raspip","");
+		port = 5001;//Integer.valueOf(sharedPref.getString("pref_key_raspport", "0"));
 	}
 	
 	public void sendNow () {
@@ -73,6 +69,7 @@ public class Sender {
 			json.put(speed, act.getSpeed());
 			json.put(angle, act.getGravity());
 			json.put(gear, act.getGear());
+			json.put(light,  act.getLight());
 			
 		} catch (JSONException e) {
 			Toast.makeText(act.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
@@ -83,6 +80,7 @@ public class Sender {
 		json.remove(speed);
 		json.remove(angle);
 		json.remove(gear);
+		json.remove(light);
 		
 	}
 	

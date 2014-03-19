@@ -62,7 +62,7 @@
         android:thumb="@drawable/throttlebutton" />
 
     <ToggleButton
-        android:id="@+id/toggleButton1"
+        android:id="@+id/toggleButtonLight"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_x="407dp"

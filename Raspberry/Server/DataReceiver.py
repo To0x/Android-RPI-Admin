@@ -40,14 +40,14 @@ class Receiver(threading.Thread):
             
             Receiver.lock.acquire()
             
-            strdata = str(data)[2:-1] # cut of b' at the beginning and ' at the end
-            
+            strdata = str(data)#[2:-1] # cut of b' at the beginning and ' at the end
+            #print("Data " + strdata + " und " + str(data))
             decoded = json.loads(strdata)
             speed = decoded["speed"]
             angle = decoded["angle"]
             gear = decoded["gear"]
-            
-            self.controler.update(speed,angle,gear)
+            light = decoded["light"]
+            self.controler.update(speed,angle,gear,light)
             
             Receiver.lock.release()
             
@@ -56,7 +56,7 @@ class Receiver(threading.Thread):
 
 controler = Controler()
 
-thread = Receiver(controler, "192.168.0.101", 5001)
+thread = Receiver(controler, "192.168.55.1", 5001)
 thread.start()
 
 while True:

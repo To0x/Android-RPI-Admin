@@ -16,6 +16,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
+import android.widget.ToggleButton;
 
 
 public class MainActivity extends Activity {
@@ -42,7 +43,7 @@ public class MainActivity extends Activity {
 	Switch switchGear = null;
 	SeekBar speedBar = null;
 	WebView wvCamera = null;
-	
+	ToggleButton tbLight = null;
 	public int getSpeed() {
 		return this.speed;
 	}
@@ -53,6 +54,14 @@ public class MainActivity extends Activity {
 	
 	public boolean getGear() {
 		return switchGear.isChecked();
+	}
+	
+	public int getLight(){
+		if (tbLight.isChecked())
+		{	
+			return 1;
+		}
+		return 0;
 	}
 	
 	public void onButtonClick(View view){
@@ -98,7 +107,7 @@ public class MainActivity extends Activity {
 		wvCamera.getSettings().setJavaScriptEnabled(true);
 		wvCamera.setWebViewClient(new WebViewClient());
 		speedBar = (SeekBar) findViewById(R.id.seekBarSpeed);
-		
+		tbLight = (ToggleButton) findViewById(R.id.toggleButtonLight);
 		speedBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			
 			@Override

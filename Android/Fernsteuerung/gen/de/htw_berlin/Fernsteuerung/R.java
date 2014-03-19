@@ -64,7 +64,7 @@ public final class R {
         public static final int textViewDrive=0x7f090011;
         public static final int textViewReverse=0x7f090010;
         public static final int textViewServerOutput=0x7f090006;
-        public static final int toggleButton1=0x7f09000f;
+        public static final int toggleButtonLight=0x7f09000f;
         public static final int webViewCamera=0x7f090012;
     }
     public static final class layout {
