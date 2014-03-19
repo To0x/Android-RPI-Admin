@@ -1,43 +1,11 @@
 package de.htw_berlin.Fernsteuerung;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
-import java.net.Socket;
-
-import org.xmlrpc.android.XMLRPCClient;
-import org.xmlrpc.android.XMLRPCException;
-
 import android.app.Activity;
-import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.os.StrictMode;
-import android.text.InputFilter.LengthFilter;
-import android.util.Log;
-import android.view.Menu;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import de.htw_berlin.Fernsteuerung.R;
-
-import de.htw_berlin.Fernsteuerung.__DEFINES.*;
 
 public class FernsteuerungActivity extends Activity {
-	
+	/*
 	private Sensor mRotVectSensor;
 	private SensorManager mSensorManager;
 
@@ -99,50 +67,15 @@ public class FernsteuerungActivity extends Activity {
 		actuallyLayout = layout;
 		return;
 	}
-
-	private int startRPCConnection() {
-		
-		//TODO unbedingt rausholn!!!
-		//XXX in Thread umschreiben
-		if (android.os.Build.VERSION.SDK_INT > 9) {
-		    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitNetwork().build();
-		    StrictMode.setThreadPolicy(policy);
-		}
-		
-		try {
-			
-			//TODO check if needed?
-			// included Timeout for Connection!
-			/*
-			clientSocket = new Socket();
-			clientSocket.setSoTimeout(200);
-			clientSocket.connect(new InetSocketAddress(__DEFINES.SERVER_IP, __DEFINES.SERVER_PORT), 200);
-			*/
-			
-			
-			XMLRPCClient client = null;
-			client = new XMLRPCClient(new java.net.URL(String.format("http://%s:%d", __DEFINES.SERVER_IP, __DEFINES.SERVER_PORT)));
-			int result = 0;
-			//result =  (Integer) client.call("add",2,4);
-			//client.call("control","192.168.178.37");
-			return result;
-			
-		} catch (MalformedURLException e1) {
-			Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
-		//} catch (XMLRPCException e1) {
-		//	Toast.makeText(getApplicationContext(), e1.getMessage(), Toast.LENGTH_LONG).show();
-		}
-		return -1;
-	}
-	
+	*/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		
-		int bla = this.startRPCConnection();
-		Log.d("Ergebnis: ", String.valueOf(bla));
-		Toast.makeText(getApplicationContext(), String.format("Result: %d", bla), Toast.LENGTH_LONG).show();
+//		int bla = this.startRPCConnection();
+//		Log.d("Ergebnis: ", String.valueOf(bla));
+//		Toast.makeText(getApplicationContext(), String.format("Result: %d", bla), Toast.LENGTH_LONG).show();
 		
 		Intent intent = new Intent(this, MainActivity.class);
 		startActivity(intent);
@@ -157,7 +90,7 @@ public class FernsteuerungActivity extends Activity {
 	/*
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
+		s
 		super.onCreate(savedInstanceState);
 		
 		loadLayout(LAYOUT.LIVE);

@@ -9,13 +9,13 @@
         <EditTextPreference
             android:key="pref_key_raspip"
             android:title="@string/raspiptitle"
-            android:defaultValue="192.168.123.1">
+            android:defaultValue="192.168.55.1">
 		</EditTextPreference>
 		
         <EditTextPreference
             android:key="pref_key_raspport"
             android:title="@string/raspipport"
-            android:defaultValue="5000">
+            android:defaultValue="5001">
 		</EditTextPreference>
 		
 		        

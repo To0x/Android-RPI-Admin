@@ -59,8 +59,8 @@ public class Sender {
 	
 	public void loadSettingsData() {
 		SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(act);
-		ip = "192.168.55.1";//sharedPref.getString("pref_key_raspip","");
-		port = 5001;//Integer.valueOf(sharedPref.getString("pref_key_raspport", "0"));
+		ip = sharedPref.getString("pref_key_raspip","");
+		port = Integer.valueOf(sharedPref.getString("pref_key_raspport", "0"));
 	}
 	
 	public void sendNow () {
@@ -97,6 +97,9 @@ public class Sender {
 	    return null;
 	}
 	
+	/* XXX ----------------------------------------
+	 * XXX NOT IN USE
+	 * XXX ----------------------------------------
 	private void sendBroadcast(String msg) {
 		
 		//TODO funktoiniert nicht!
@@ -112,8 +115,8 @@ public class Sender {
 			Toast.makeText(act.getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
 			Log.e(this.toString(), e.getMessage(), e);
 		}
-
 	}
+	*/
 		
 	private void sendNow (String msg) {
 		
