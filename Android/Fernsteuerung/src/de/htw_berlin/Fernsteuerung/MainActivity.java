@@ -2,18 +2,21 @@ package de.htw_berlin.Fernsteuerung;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
 import android.widget.ToggleButton;
@@ -21,12 +24,32 @@ import android.widget.ToggleButton;
 
 public class MainActivity extends Activity {
 
-	private SensorHelper sens = null;
-	private Timer timer;
-	private TimerTask myTimer = null;
-	private Sender sender = null;
-	private final int TimerTick = 100;
+	//XXX
+	//TODO
+	/*
+	 * Programmstart optimieren (direkt MainActivity)
+	 * RPC-Connection einbauen
+	 *    --> Shutdown Raspberry
+	 *    --> Turn Camera ON / OFF
+	 *    
+	 * Camera-Check (Memory-Leek)
+	 * Automatisches aufbauen der WLAN-Verbindung
+	 * 
+	 */
 	
+	//--------------------------------------------
+	// DEFINES
+	//--------------------------------------------
+	private final static boolean SEND = true;
+	private final static String VIDEOPATH = "http://192.168.55.1:8080/javascript_simple.html";
+		
+	//--------------------------------------------
+	// TIMER
+	//--------------------------------------------
+	private final int TimerTick = 100;
+	private Timer timer = null;
+	private TimerTask myTimer = null;
+	private TimerTask memoryHelper = null;
 	
 	//--------------------------------------------
 	// SPEED
@@ -35,15 +58,28 @@ public class MainActivity extends Activity {
 	private final int minSpeed = 0;
 	private final int speedDifference = 5;
 	private int speed = 0;
+	
+	//--------------------------------------------
+	// VIEW-ELEMENTS
+	//--------------------------------------------
+	private Switch switchGear = null;
+	private SeekBar speedBar = null;
+	private WebView wvCamera = null;
+	private ToggleButton tbLight = null;
 
 	
-	Button btnSpeed = null;
-	Button btnBreak = null;
-	SeekBar seekBarGravity = null;
-	Switch switchGear = null;
-	SeekBar speedBar = null;
-	WebView wvCamera = null;
-	ToggleButton tbLight = null;
+	//--------------------------------------------
+	// OTHER
+	//--------------------------------------------
+	private OnTouchListener l = null;
+	private SensorHelper sens = null;
+	private Sender sender = null;
+	private Runtime info = null;
+	
+
+	//--------------------------------------------
+	// GETTER
+	//--------------------------------------------
 	public int getSpeed() {
 		return this.speed;
 	}
@@ -90,42 +126,76 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	public void setSeekBarProgress(int progress) {
-		seekBarGravity.setProgress(progress);
-	}
+	public class Listener implements OnTouchListener {
 
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			wvCamera.stopLoading();
+			clearMemory();
+			wvCamera = null;
+			System.gc();
+			
+			initVideoStream();
+			wvCamera.loadUrl(VIDEOPATH);
+			return true;
+		}
+	}
+	
+	@SuppressLint("SetJavaScriptEnabled")
+	public void initVideoStream() {
+		wvCamera = (WebView) findViewById(R.id.webViewCamera);
+		wvCamera.getSettings().setJavaScriptEnabled(true);
+		wvCamera.getSettings().setLoadWithOverviewMode(true);
+		
+		wvCamera.setWebViewClient(new WebViewClient());	
+		wvCamera.setWebChromeClient(new WebChromeClient());
+		
+		wvCamera.setDrawingCacheEnabled(false);
+		wvCamera.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
+		wvCamera.getSettings().setAppCacheEnabled(false);
+		
+		wvCamera.setOnTouchListener(l);
+	}
+	
+	public void clearMemory() {
+		
+		wvCamera.clearCache(true);
+		wvCamera.destroyDrawingCache();
+		wvCamera.clearHistory();
+		wvCamera.freeMemory();
+	}
+	
+	
+	//--------------------------------------------
+	// LIVECYCLE
+	//--------------------------------------------
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		info = Runtime.getRuntime();
+		
+		l = new Listener();
 		setContentView(R.layout.control);
-		btnSpeed = (Button) findViewById(R.id.btnSpeed);
-		btnBreak = (Button) findViewById(R.id.btnBreak);
-		seekBarGravity = (SeekBar) findViewById(R.id.seekBarGravity);
 		switchGear = (Switch) findViewById(R.id.switchGear);
-		wvCamera = (WebView) findViewById(R.id.webViewCamera);
-		wvCamera.getSettings().setJavaScriptEnabled(true);
-		wvCamera.setWebViewClient(new WebViewClient());
 		speedBar = (SeekBar) findViewById(R.id.seekBarSpeed);
 		tbLight = (ToggleButton) findViewById(R.id.toggleButtonLight);
+		
 		speedBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			//TODO do for switchGear not for seekbar
 			
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-				// TODO Auto-generated method stub
 				speed = progress;
 				if (speed == 0){
 					switchGear.setClickable(true);
@@ -134,18 +204,17 @@ public class MainActivity extends Activity {
 				}
 			}
 		});
-		//TODO Rückwärtsgangswitch nur bei speed=0 aktivieren
 		
+		initVideoStream();
 		sens = new SensorHelper(this);
 		sens.initSensoring();
 
-		sender = new Sender(this);	
+		sender = new Sender(this);
+		sender.loadSettingsData();
 		myTimer = new SendTimer(sender);
-
-		//sender.sendBroadcast("Raspcar?"); --> is set to private (cause function is failure)
+//		memoryHelper = new MemoryHelper(info, wvCamera, this);
 	}
-	
-
+		
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -156,6 +225,7 @@ public class MainActivity extends Activity {
 		timer.purge();
 		timer = null;
 		
+		wvCamera.stopLoading();
 		myTimer = null;
 	}
 
@@ -166,11 +236,16 @@ public class MainActivity extends Activity {
 		sens.startSensoring();
 		timer = new Timer(false);
 		myTimer = new SendTimer(sender);
-		timer.schedule(myTimer,1000	 , TimerTick);
-		
+//		memoryHelper = new MemoryHelper(info, wvCamera,this);
 		sender.loadSettingsData();
 		
-		wvCamera.loadUrl("http://192.168.55.1:8080/javascript_simple.html");
+//		timer.schedule(memoryHelper, 0, 1000);
+		
+		if (SEND)
+			timer.schedule(myTimer,1000	 , TimerTick);
+		
+		
+		wvCamera.loadUrl(VIDEOPATH);
 	}
 
 	//--------------------------------------------
@@ -234,6 +309,4 @@ public class MainActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 		
 	}
-	
-	
 }

@@ -18,7 +18,6 @@ server = SimpleXMLRPCServer(("localhost", 9000),
 
 server.register_introspection_functions()
 
-
 def adder_function(a,b):
     return a+b
 
@@ -34,10 +33,7 @@ def startAudio(audioType, ipAdress, port):
 def startControl(ipAdress):
     pass
 
-
-    
-
-
+	
 server.register_function(adder_function, 'add')
 print ("add registered")
 server.register_function(startCam, 'startCam')
@@ -47,5 +43,3 @@ print ("audio registered")
 server.register_function(startControl, 'control')
 print ("control registered")
 server.serve_forever()
-
-

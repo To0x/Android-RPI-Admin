@@ -60,10 +60,10 @@ public class SensorHelper implements SensorEventListener{
 
 			lastGravity = event.values[1];
 			
-			if (gravity < 0)
-				content.setSeekBarProgress(Math.round(50-Math.abs(gravity)/45*50));
-			else
-				content.setSeekBarProgress(Math.round(gravity/45*50+50));
+			//if (gravity < 0)
+				//content.setSeekBarProgress(Math.round(50-Math.abs(gravity)/45*50));
+			//else
+				//content.setSeekBarProgress(Math.round(gravity/45*50+50));
 		}
 		
 	}

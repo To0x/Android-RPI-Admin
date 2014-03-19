@@ -93,9 +93,10 @@
 
     <WebView
         android:id="@+id/webViewCamera"
-        android:layout_width="320dp"
-        android:layout_height="240dp"
-        android:layout_x="102dp"
-        android:layout_y="26dp" />
+        android:layout_width="326dp"
+        android:layout_height="205dp"
+        android:layout_x="103dp"
+        android:layout_y="30dp"
+        android:onClick="onClickWebView" />
 
 </AbsoluteLayout>

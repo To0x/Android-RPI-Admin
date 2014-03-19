@@ -19,7 +19,7 @@ class Receiver(threading.Thread):
                      socket.SOCK_DGRAM) # UDP
         
         self.sock.bind((self.UDP_IP, self.UDP_PORT))
-        self.sock.settimeout(2)
+        self.sock.settimeout(1)
         
         pass
     
@@ -36,6 +36,7 @@ class Receiver(threading.Thread):
             try:
                 data, addr = self.sock.recvfrom(1024) # buffer size is 1024 bytes
             except:
+				self.controler.update(0,0,False,0)
                 continue
             
             Receiver.lock.acquire()
