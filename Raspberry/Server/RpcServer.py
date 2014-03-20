@@ -9,6 +9,7 @@ from threading import Thread
 #from Cam import Cam
 from test.test_typechecks import Integer
 import socket
+import os
 
 #server = SimpleXMLRPCServer(('141.45.203.191', 9000),requestHandler=RequestHandler)
 
@@ -31,6 +32,7 @@ def startAudio(audioType, ipAdress, port):
 	audio.start()
 
 def startControl(ipAdress):
+	os.system("python /home/pi/Desktop/Server/DataReceiver.py")
     pass
 
 	
