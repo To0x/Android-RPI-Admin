@@ -99,4 +99,15 @@
         android:layout_y="30dp"
         android:onClick="onClickWebView" />
 
+    <ToggleButton
+        android:id="@+id/toggleButtonStartEngine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="12dp"
+        android:layout_y="201dp"
+        android:background="@drawable/selectorengine"
+        android:text="ToggleButton"
+        android:textOn=" "
+        android:textOff=" "/>
+
 </AbsoluteLayout>
